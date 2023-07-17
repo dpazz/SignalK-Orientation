@@ -265,7 +265,6 @@ class SKOutput<MagCal> : public SKEmitter,
     json_doc["path"] = this->get_sk_path();
     JsonObject value = json_doc.createNestedObject("value");
     if (ValueProducer<MagCal>::output.is_data_valid) {
-    #ifndef F_USING_SMARTSENSOR
       value["incl"] = ValueProducer<MagCal>::output.magnetic_inclination;
       value["ferr"] = ValueProducer<MagCal>::output.cal_fit_error;
       value["ferrt"] = ValueProducer<MagCal>::output.cal_fit_error_trial;
@@ -273,14 +272,6 @@ class SKOutput<MagCal> : public SKEmitter,
       value["bmagt"] = ValueProducer<MagCal>::output.mag_field_magnitude_trial;
       value["noise"] = ValueProducer<MagCal>::output.mag_noise_covariance;
       value["solver"] = ValueProducer<MagCal>::output.mag_solver;
-     #endif
-     #ifdef F_USING_SMARTSENSOR
-      value["IMU_calibration_index"] = ValueProducer<MagCal>::output.IMU_calibration_index;
-      value["Gyro_calibration_index"] = ValueProducer<MagCal>::output.Gyro_calibration_index;
-      value["Acc_calibration_index"] = ValueProducer<MagCal>::output.Acc_calibration_index;
-      value["mag_calibration_index"] = ValueProducer<MagCal>::output.Mag_calibration_index;
-
-     #endif 
     } else {
       /** Show that valid values are not available for the parameters that
        * are based on recent readings (ones based on stored cal should be OK).
@@ -289,7 +280,6 @@ class SKOutput<MagCal> : public SKEmitter,
        * the string "null", or the value 0, which one gets by e.g. 
        * value["yaw"] = "" or "null" or NULL, respectively.
        */
-     #ifndef F_USING_SMARTSENSOR 
       value["incl"] = (char*)0;  // send JSON null. Signal K displays -.----
       value["ferr"] = ValueProducer<MagCal>::output.cal_fit_error;
       value["ferrt"] = (char*)0;  // send JSON null. Signal K displays -.----
@@ -297,14 +287,6 @@ class SKOutput<MagCal> : public SKEmitter,
       value["bmagt"] = (char*)0;  // send JSON null. Signal K displays -.----
       value["noise"] = (char*)0;  // send JSON null. Signal K displays -.----
       value["solver"] = ValueProducer<MagCal>::output.mag_solver;
-      #endif
-      #ifdef F_USING_SMARTSENSOR
-      value["IMU_calibration_index"] = (char*) 0;  // send JSON null. Signal K displays -.----
-      value["Gyro_calibration_index"] = (char*) 0; // send JSON null. Signal K displays -.---- 
-      value["Acc_calibration_index"] = (char*) 0; // send JSON null. Signal K displays -.----
-      value["mag_calibration_index"] = (char*) 0; // send JSON null. Signal K displays -.----
-
-      #endif
     }
     // Confirm JsonDoc size was adequate. If insufficient memory is
     // available, then trailing elements of JsonDoc are omitted.

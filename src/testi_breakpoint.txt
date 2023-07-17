@@ -1,0 +1,477 @@
+
+    Serial.println ("breakpoint initializeFusionEngine");
+    Serial.print ("sfg = 0x");
+    Serial.println((int32_t) sfg, HEX);
+    Serial.print ("pin_i2c_sda = ");
+    Serial.println((int32_t) pin_i2c_sda, DEC);
+    Serial.print ("pin_i2c_scl = ");
+    Serial.println((int32_t) pin_i2c_scl, DEC);
+    while (true) {};
+
+    
+    
+    Serial.println ("breakpoint Combo_AMG_I2C_Initialize");
+    Serial.print ("pSensorHandle = 0x");
+    Serial.println((int32_t) pSensorHandle, HEX);
+    Serial.print ("index = ");
+    Serial.println( index, HEX);
+    Serial.print ("sAddress = ");
+    Serial.println(sAddress, HEX);
+    Serial.print ("pSensorHandle->isInitialized = ");
+    Serial.println(pSensorHandle->isInitialized, HEX);
+    while (true) {};
+
+     
+    Serial.println ("breakpoint before Combo_AMG_I2C_Initialize");
+    Serial.print ("pSensorHandle_ = 0x");
+    Serial.println((int32_t) pSensorHandle_, HEX);
+    Serial.print ("reg = ");
+    Serial.println( reg, HEX);
+    Serial.print ("pSensorHandle_->isInitialized = ");
+    Serial.println(pSensorHandle_->isInitialized, HEX);
+    Serial.print ("pSensorHandle_->deviceInfo.functionParam = 0x");
+    Serial.println((int32_t)pSensorHandle_->deviceInfo.functionParam, HEX);
+    while (true) {};
+
+    Serial.print ("sstatus = 0x");
+    Serial.println(sstatus, HEX);
+    Serial.print ("test_result = 0x");
+    Serial.println(test_result, HEX);
+    Serial.print ("error = 0x");
+    Serial.println(error, HEX);
+
+    
+            
+    Serial.println ("breakpoint Combo_AMG_I2C_Initialize");
+    Serial.print ("Combo_AMG_sensor = 0x");
+    Serial.println((int32_t)Combo_AMG_sensor, HEX);
+    Serial.print ("sstatus = ");
+    Serial.println(sstatus, DEC);
+    while (true) {}; 
+
+       
+    Serial.println ("breakpoint before Combo_AMG_I2C_ReadData");
+    Serial.print ("pSensorHandle_ = 0x");
+    Serial.println((int32_t) pSensorHandle_, HEX);
+    Serial.print ("pSensorHandle_->isInitialized = ");
+    Serial.println(pSensorHandle_->isInitialized, HEX);
+    Serial.print ("pSensorHandle_->deviceInfo.functionParam = 0x");
+    Serial.println((int32_t)pSensorHandle_->deviceInfo.functionParam, HEX);
+    while (true) {};
+
+    
+    Serial.println ("breakpoint SaveMagneticCalib");
+    Serial.print ("pSensor_ = 0x");
+    Serial.println((int32_t) pSensor_, HEX);
+    int8_t j;
+    for (j=0; j <11;j++) { 
+                           Serial.print("index =");
+                           Serial.print(j,DEC);
+                           Serial.print (" offsets_and_radiuses = ");
+                           Serial.println( offsets_and_radiuses[j], DEC);
+                        }
+    Serial.print ("pSensor_->isInitialized = ");
+    Serial.println(pSensor_->isInitialized, HEX);
+    while (true) {};
+
+    
+            Serial.println ("breakpoint Combo_AMG_I2C_ReadData");
+            Serial.print ("error = ");
+            Serial.println(error, DEC);
+            Serial.print ("sstatus = ");
+            Serial.println(sstatus, DEC);
+            while (true) {}; 
+
+
+        Serial.println ("breakpoint after Combo_AMG_I2C_ReadData and Combo_AMG_I2C_GetCalibration");
+        Serial.print ("sts1 = "); Serial.println(sts1,DEC);
+        Serial.print ("sts2 = "); Serial.println(sts2,DEC);
+        while (true) {};
+
+
+        Serial.println ("breakpoint Combo_AMG_I2C_Configure");
+        Serial.print ("remap_ = "); Serial.println(remap_,DEC);
+        Serial.print ("sign_ = "); Serial.println(sign_,DEC);
+        Serial.print ("pos_ = "); Serial.println(pos_,DEC);
+        while (true) {};
+
+
+        Serial.println ("breakpoint SetAxisremap");
+        Serial.print ("list_.value = "); Serial.println(list_.value,DEC);
+        while (true) {};
+
+
+    Serial.println ("breakpoint MagCalValues");
+    int8_t j;
+    for (j=0; j <11;j++) { 
+                           Serial.print("j =");
+                           Serial.print(j,DEC);
+                           Serial.print (" mag_cal_.cal_data[j] = ");
+                           Serial.println( mag_cal_.cal_data[j], DEC);
+                        }
+    Serial.print (" mag_cal_.pos = ");
+    Serial.println( mag_cal_.pos, DEC);
+    while (true) {};
+
+    
+    Serial.println ("breakpoint MagCalValues::set_configuration");
+    Serial.println (" config = ");
+    char buffer [1000];
+    serializeJsonPretty(config, buffer);
+    Serial.println(buffer);
+    int8_t j;
+    for (j=0; j <11;j++) { 
+                           Serial.print("j ="); Serial.print(j,DEC);
+                           Serial.print (" mag_cal_.cal_data[j] = "); Serial.println( mag_cal_.cal_data[j], DEC);
+                        }
+    Serial.print (" report_interval_ms_ = "); Serial.println( report_interval_ms_, DEC);
+    Serial.print (" mag_cal_.pos = "); Serial.println( mag_cal_.pos, DEC);
+    while (true) {};
+
+    
+        Serial.println ("breakpoint Combo_AMG_I2C_GetCalibration");
+        Serial.print ("Combo_AMG_sensor = 0x");
+        Serial.println((int32_t)Combo_AMG_sensor, HEX);
+        Serial.print ("pCalib_index->IMU_Calib_index = ");
+        Serial.println(pCalib_index->IMU_Calib_index, DEC);
+        Serial.print ("pCalib_index->Accel_Calib_index = ");
+        Serial.println(pCalib_index->Accel_Calib_index, DEC);
+        Serial.print ("pCalib_index->Mag_Calib_index = ");
+        Serial.println(pCalib_index->Mag_Calib_index, DEC);
+        Serial.print ("pCalib_index->Gyro_Calib_index = ");
+        Serial.println(pCalib_index->Gyro_Calib_index, DEC);
+        delay(5000);
+        
+        //while (true) {};  
+
+ 
+                        if (OPERATION_MODE_CONFIG != mode) {
+                            Serial.println("Breakpoint Combo_AMG_I2C_ReadData");
+                            Serial.print("mode ="); Serial.println( mode, DEC);
+                            while (true){};
+                        }  
+ 
+            Serial.println ("breakpoint Combo_AMG_I2C_ReadData");
+            Serial.print ("pReadList->numBytes = ");
+            Serial.println(pReadList->numBytes, DEC);
+            Serial.print ("pSensorHandle->isInitialized = ");
+            Serial.println(pSensorHandle->isInitialized, DEC);
+            while (true) {}; 
+                          
+
+            Serial.println ("breakpoint Combo_AMG_I2C_ReadData");
+            Serial.print ("pReadList->numBytes = ");
+            Serial.println(pReadList->numBytes, DEC);
+            while (true) {}; 
+
+
+    Serial.println("Breakpoint fInitializeFusion");
+    while (true){};
+
+    
+                            Serial.println("Breakpoint Combo_AMG_I2C_SetModeFusion");
+                            Serial.print("sstatus ="); Serial.println( sstatus, DEC);
+                            Serial.print("error ="); Serial.println( error, DEC);
+                            while (true){};
+      
+                    /*
+                    for (int8_t i = 0; i < 6; i++){
+                      xyz = Combo_AMG_sensor->getVector(vec_type[i]); // reads all vector data from IMU chip running NDOF fusion
+                      for (int8_t j = 0; j < 3; j++){
+                        pvectors_readbuffer->w[i*3 + j] = xyz[j];
+                      };
+                      wxyz = Combo_AMG_sensor->getQuat();
+                      pvectors_readbuffer->w[18] = wxyz.w(); // store quaternion data from 18st position
+                      pvectors_readbuffer->w[19] = wxyz.x();
+                      pvectors_readbuffer->w[20] = wxyz.y();
+                      pvectors_readbuffer->w[21] = wxyz.z();
+                      */
+                      /*
+                      Serial.print ("mode = ");
+                      uint8_t mode = Combo_AMG_sensor->getMode();
+                      Serial.println(mode, DEC);
+                       for (i=0; i<22; i++){
+                        Serial.print("i:\t");Serial.print(i,DEC);Serial.print("\treadbuffer[i]");Serial.println(*pvectors_readbuffer[i], HEX);
+                       }
+                       if (mode != OPERATION_MODE_NDOF) Combo_AMG_sensor->setMode(OPERATION_MODE_NDOF);
+                       delay (5000);
+                    */
+  /*               
+  sensors_event_t orientationData , angVelocityData , linearAccelData, magnetometerData, accelerometerData, gravityData;
+  Combo_AMG_sensor->getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
+  Combo_AMG_sensor->getEvent(&angVelocityData, Adafruit_BNO055::VECTOR_GYROSCOPE);
+  Combo_AMG_sensor->getEvent(&linearAccelData, Adafruit_BNO055::VECTOR_LINEARACCEL);
+  Combo_AMG_sensor->getEvent(&magnetometerData, Adafruit_BNO055::VECTOR_MAGNETOMETER);
+  Combo_AMG_sensor->getEvent(&accelerometerData, Adafruit_BNO055::VECTOR_ACCELEROMETER);
+  Combo_AMG_sensor->getEvent(&gravityData, Adafruit_BNO055::VECTOR_GRAVITY);
+
+  printEvent(&orientationData);
+  printEvent(&angVelocityData);
+  printEvent(&linearAccelData);
+  printEvent(&magnetometerData);
+  printEvent(&accelerometerData);
+  printEvent(&gravityData);
+
+  int8_t boardTemp = Combo_AMG_sensor->getTemp();
+  Serial.println();
+  Serial.print(F("temperature: "));
+  Serial.println(boardTemp);
+
+  uint8_t system, gyro, accel, mag = 0;
+  Combo_AMG_sensor->getCalibration(&system, &gyro, &accel, &mag);
+  Serial.println();
+  Serial.print("Calibration: Sys=");
+  Serial.print(system);
+  Serial.print(" Gyro=");
+  Serial.print(gyro);
+  Serial.print(" Accel=");
+  Serial.print(accel);
+  Serial.print(" Mag=");
+  Serial.println(mag);
+  uint8_t sstatus, test, error,mode;
+  sstatus = test = error = 0x0F;
+  Combo_AMG_sensor->getSystemStatus(&sstatus,&test,&error);
+  Serial.print(" sstatus=");
+  Serial.print(sstatus);
+  Serial.print(" test=");
+  Serial.print(test);
+  Serial.print(" error=");
+  Serial.println(error);
+  mode = Combo_AMG_sensor->getMode();
+  Serial.print(" mode=");
+  Serial.print(mode);
+  // Remap settings
+  typedef enum {
+    REMAP_CONFIG_P0 = 0x21,
+    REMAP_CONFIG_P1 = 0x24, // default
+    REMAP_CONFIG_P2 = 0x24,
+    REMAP_CONFIG_P3 = 0x21,
+    REMAP_CONFIG_P4 = 0x24,
+    REMAP_CONFIG_P5 = 0x21,
+    REMAP_CONFIG_P6 = 0x21,
+    REMAP_CONFIG_P7 = 0x24
+  } axis_remap_config_t;
+
+  // Remap Signs 
+  typedef enum {
+    REMAP_SIGN_P0 = 0x04,
+    REMAP_SIGN_P1 = 0x00, // default
+    REMAP_SIGN_P2 = 0x06,
+    REMAP_SIGN_P3 = 0x02,
+    REMAP_SIGN_P4 = 0x03,
+    REMAP_SIGN_P5 = 0x01,
+    REMAP_SIGN_P6 = 0x07,
+    REMAP_SIGN_P7 = 0x05
+  } axis_remap_sign_t;
+
+  if (mode != OPERATION_MODE_NDOF) {Combo_AMG_sensor->setAxisRemap((OR_sensor_::adafruit_bno055_axis_remap_config_t) REMAP_CONFIG_P1);
+                                    Combo_AMG_sensor->setAxisSign((OR_sensor_::adafruit_bno055_axis_remap_sign_t)REMAP_SIGN_P1);
+                                    Combo_AMG_sensor->setMode(OPERATION_MODE_NDOF);}
+  Serial.println("--");
+  delay(1000); */             
+
+            Serial.println("Breakpoint Combo_AMG_therm_Init");
+            Serial.print ("status = "); Serial.println(status,DEC);
+            delay(10000);
+
+            
+
+            /*
+            Serial.println("Breakpoint Combo_AMG_therm_Read");
+            Serial.print ("psensorHandle = "); Serial.println((uint64_t) pSensorHandle,HEX);
+            Serial.print ("Combo_AMG_sensor = "); Serial.println((uint64_t) Combo_AMG_sensor,HEX);
+            delay(10000);
+            */
+            /*
+            while (k < retry) {
+            Combo_AMG_sensor->getSystemStatus(&sstatus, &test_result, &error);
+            if (sstatus != 1 ) // not SYSTEM ERROR
+                {
+            */
+
+            
+    /*
+            Serial.print ("breakpoint 1 Combo_AMG_therm_Init");                                                              
+            Serial.print ("\tsensor->sensor_type = ");
+            Serial.println(sensor->sensor_type,DEC); 
+            delay (5000);
+    */    
+
+           
+            /*
+            Serial.println ("breakpoint Combo_AMG_therm_Init");                  
+            Serial.print ("Ciclo: "); Serial.print(i ,HEX);
+            Serial.print ("\tpSensor_= "); Serial.print((uint64_t)pSensor_ ,HEX);                                                              
+            Serial.print ("\tpSensor_->isInitialized = ");
+            Serial.println(pSensor_->isInitialized,DEC);                                                             
+            Serial.print ("\tpSensor_->sensor_type= ");
+            Serial.println(pSensor_->sensor_type,DEC);  
+            delay(5000);
+            */    
+
+                        
+            /*     
+            Serial.print (" pSensorHandle_ = "); Serial.println((uint64_t)sensor->deviceInfo.functionParam ,HEX);                                                              
+            Serial.print (" Combo_AMG_sensor in Combo_AMG_therm_Init = ");
+            Serial.println((uint64_t) ((i2c_sensorhandle_t*)sensor->deviceInfo.functionParam)->deviceInfo.functionParam ,HEX); 
+            delay(10000) ;
+            */
+
+             /*
+    if (! at_least_one_working) {
+        Serial.print("readSensors PANIC - NO SENSOR IS WORKING");
+        while (true){};
+    
+    }
+    */
+
+    
+            /*
+            Serial.print("Combo_AMG_I2C_Initialize --> ");
+            Serial.print("Combo_AMG_sensor:\t"); Serial.print((uint64_t)Combo_AMG_sensor, HEX);
+            Serial.print("\tpSensorHandle:\t"); Serial.println((uint64_t)pSensorHandle, HEX);
+            */
+
+            
+        /*
+        uint8_t sstatus, test_result, error;
+        sstatus = test_result = error = 0xFF;
+        Combo_AMG_sensor->getSystemStatus(&sstatus, &test_result, &error);
+        if (sstatus == 1) {
+            Serial.println("Combo_AMG_I2C_GetCalibration -- PANIC! - SYSTEM ERROR");
+            Serial.print("Sensor SelfTest:\t\t"); Serial.println(test_result, HEX);
+            Serial.print("Sensor SysStatus:\t\t"); Serial.println(sstatus,DEC);
+            Serial.print("Sensor init error:\t\t"); Serial.println (error,DEC);
+            while(true) {};
+
+        }
+        */
+        /*
+            Serial.println("Combo_AMG_I2C_GetCalibration -- SHOW DATA READ FROM CHIP");
+            Serial.print("IMU_Calib_index:\t\t"); Serial.println(Calib.IMU_Calib_index, DEC);
+            Serial.print("Gyro_Calib_index:\t\t"); Serial.println(Calib.Gyro_Calib_index, DEC);
+            Serial.print("Accel_Calib_index:\t\t"); Serial.println(Calib.Accel_Calib_index, DEC);
+            Serial.print("Mag_Calib_index:\t\t"); Serial.println(Calib.Mag_Calib_index, DEC);
+            Serial.print("Sensor mode:\t\t"); Serial.println(Combo_AMG_sensor->getMode(), DEC);
+            uint8_t sstatus, test_result, error;
+            sstatus = test_result = error = 0xFF;
+            Combo_AMG_sensor->getSystemStatus(&sstatus, &test_result, &error);
+            Serial.print("Sensor SelfTest:\t\t"); Serial.println(test_result, HEX);
+            Serial.print("Sensor SysStatus:\t\t"); Serial.println(sstatus,DEC);
+            Serial.print("Sensor init error:\t\t"); Serial.println (error,DEC);
+            delay (2000);
+        */
+
+        
+
+        
+        /*
+        uint8_t sstatus, test_result, error, i;
+        sstatus = test_result = error = 0x0F;
+        Combo_AMG_sensor->getSystemStatus(&sstatus, &test_result, &error);
+        if (sstatus == 1) {
+            Serial.println("Combo_AMG_I2C_SetCalibrationData -- PANIC! - SYSTEM ERROR");
+            Serial.print("Sensor mode:\t\t"); Serial.println(Combo_AMG_sensor->getMode(), HEX);
+            Serial.print("Sensor SelfTest:\t\t"); Serial.println(test_result, HEX);
+            Serial.print("Sensor SysStatus:\t\t"); Serial.println(sstatus,DEC);
+            Serial.print("Sensor init error:\t\t"); Serial.println (error,DEC);
+            for (i=0; i<22; i++) {
+                Serial.print("i:\t"); Serial.print(i, DEC);
+                Serial.print("\tpCalib_data [i]:\t\t"); Serial.println(pCalib_data [i], HEX);
+            }
+            for (i=0; i<22; i+=2) {
+                Serial.print("i:\t"); Serial.print(i/2, DEC);
+                Serial.print("\tpCalib_data uint16_t [i]:\t\t");
+                Serial.print(pCalib_data [i+1], HEX);Serial.println(pCalib_data [i], HEX);
+            }
+            while(true) {};
+        
+        }
+        */           
+
+                             
+        /*
+        Serial.print("SetModeFusion after Combo_AMG_sensor->setMode(OPERATION_MODE_NDOF) ");
+        Serial.print("Mode:\t\t"); Serial.println(Combo_AMG_sensor->getMode(), DEC);
+        delay (5000);
+        */
+        /*
+        or_sensor_se_t or_sensor_error;
+        uint8_t sstatus, error, test_result;
+        sstatus = error = test_result = 0x0F; // set !=0 the ouput you want, 0 what you don'
+        Combo_AMG_sensor->getSystemStatus(&sstatus, &test_result, &error);
+        if (sstatus == 5 )      //= running 9DOF fusion 
+            return SENSOR_ERROR_NONE;
+        else {
+            if (sstatus == 1 ){ //=system error
+                Serial.println("Combo_AMG_I2C_SetModeFusion -- PANIC! -- SYSTEM ERROR");
+                Serial.print("Sensor SelfTest:\t\t"); Serial.println(test_result, HEX);
+                Serial.print("Sensor SysStatus:\t\t"); Serial.println(sstatus,DEC);
+                Serial.print("Sensor init error:\t\t"); Serial.println (error,DEC);
+                while(true) {};
+            }
+        return SENSOR_ERROR_INVALID_PARAM;
+        } */
+
+        
+        /*
+        Serial.print("SetModeFusion after Combo_AMG_sensor->setMode(OPERATION_MODE_NDOF) ");
+        Serial.print("Mode:\t\t"); Serial.println(Combo_AMG_sensor->getMode(), DEC);
+        delay (5000);
+        */
+        /*
+        or_sensor_se_t or_sensor_error;
+        uint8_t sstatus, error, test_result;
+        sstatus = error = test_result = 0x0F; // set !=0 the ouput you want, 0 what you don'
+        Combo_AMG_sensor->getSystemStatus(&sstatus, &test_result, &error);
+        if (sstatus == 5 )      //= running 9DOF fusion 
+            return SENSOR_ERROR_NONE;
+        else {
+            if (sstatus == 1 ){ //=system error
+                Serial.println("Combo_AMG_I2C_SetModeFusion -- PANIC! -- SYSTEM ERROR");
+                Serial.print("Sensor SelfTest:\t\t"); Serial.println(test_result, HEX);
+                Serial.print("Sensor SysStatus:\t\t"); Serial.println(sstatus,DEC);
+                Serial.print("Sensor init error:\t\t"); Serial.println (error,DEC);
+                while(true) {};
+            }
+        return SENSOR_ERROR_INVALID_PARAM;
+        } */
+
+         
+                            Serial.println("Breakpoint Combo_AMG_I2C_SetModeFusion");
+                            Serial.print("Combo_AMG_sensor:\t"); Serial.println( (int32_t) Combo_AMG_sensor, HEX);
+                            Serial.print("pSensorHandle->isInitialized:\t"); Serial.println( pSensorHandle->isInitialized, HEX);
+                           delay(1000);       
+
+                                           
+         
+    Serial.println ("breakpoint Combo_AMG_therm_Init");
+    Serial.print ("pSensorHandle_ = 0x");
+    Serial.println((int32_t) pSensorHandle_, HEX);
+    Serial.print ("pSensorHandle->isInitialized = ");
+    Serial.println(pSensorHandle_->isInitialized, HEX);
+    Serial.print ("pSensorHandle->deviceInfo.functionParam (Combo_AMG_sensor) = 0x");
+    Serial.println((int32_t)pSensorHandle_->deviceInfo.functionParam, HEX);
+    delay(1000);     
+
+                
+            Serial.println("Combo_AMG_I2C_Initialize at beginning");
+            Serial.print("Combo_AMG_sensor:\t\t"); Serial.println((int32_t)Combo_AMG_sensor, HEX);
+            Serial.print("pSensorHandle:\t\t"); Serial.println((int32_t)pSensorHandle, HEX);
+            delay(1000); 
+
+                   
+                   
+            Serial.println("Combo_AMG_I2C_SetCalibrationData before calling  setSensorOffsets");
+
+            Serial.print("accel_offset_x:\t"); Serial.print((int32_t)offsets.accel_offset_x, DEC);
+            Serial.print("\taccel_offset_y:\t"); Serial.print((int32_t)offsets.accel_offset_y, DEC);
+            Serial.print("\taccel_offset_z:\t"); Serial.println((int32_t)offsets.accel_offset_z, DEC);
+            Serial.print("mag_offset_x:\t"); Serial.print((int32_t)offsets.mag_offset_x, DEC);
+            Serial.print("\tmag_offset_y:\t"); Serial.print((int32_t)offsets.mag_offset_y, DEC);
+            Serial.print("\tmag_offset_z:\t"); Serial.println((int32_t)offsets.mag_offset_z, DEC);
+            Serial.print("gyro_offset_x:\t"); Serial.print((int32_t)offsets.gyro_offset_x, DEC);
+            Serial.print("\tgyro_offset_y:\t"); Serial.print((int32_t)offsets.gyro_offset_y, DEC);
+            Serial.print("\tgyro_offset_z:\t"); Serial.println((int32_t)offsets.gyro_offset_z, DEC);
+            delay(1000);              ;
+                                 

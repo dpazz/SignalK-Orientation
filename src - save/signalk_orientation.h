@@ -41,7 +41,6 @@ typedef ValueProducer<Attitude> AttitudeProducer;
  */
 struct MagCal {
   bool is_data_valid;          ///< Indicates whether data are valid.
-  #ifndef F_USING_SMARTSENSOR
   float magnetic_inclination;  ///< Magnetic field inclination from horizontal
                                ///< in radians.
   float cal_fit_error;  ///< error in current calibration's fit, expressed as
@@ -56,34 +55,6 @@ struct MagCal {
                                     ///< reading  TODO check units
   int mag_solver;  ///< solver used for current magnetic calibration. Unitless,
                    ///< in set [0,4,7,10]
-  #endif
-  #ifdef F_USING_SMARTSENSOR      //in this case MagCal is the data structure representing 
-                                  //calibration status index for IMU plus accel, mag and gyro sensors
-                                  //calibration data (aka offsets)
-                                  //according to whatever physical position the sensor chip is installed
-                                  //therefore it needs to have a sensESP path where store its value
-                                  //the value is got and set (and hence written into IMU chip registers)
-                                  //at startup of the MagCal . In case of phisical relocation the value
-                                  //can be changed using the RESTful sensESP interface whithout fw rebuild
-  union {
-      uint8_t cal_index [4];
-      struct {uint8_t IMU_calibration_index;   //ranging from 0 (not calibrated) to 3 (fully calibrated) - Readonly
-              uint8_t Mag_calibration_index;   //ranging from 0 (not calibrated) to 3 (fully calibrated) - Readonly
-              uint8_t Acc_calibration_index;   //ranging from 0 (not calibrated) to 3 (fully calibrated) - Readonly
-              uint8_t Gyro_calibration_index;  //ranging from 0 (not calibrated) to 3 (fully calibrated) - Readonly
-      };
-   };
-   union {
-      int16_t cal_data[SIZE_OFFSET_REGISTERS/2];
-      struct { int16_t offset_accel_x; int16_t offset_accel_y; int16_t offset_accel_z; //accelerometer calib data
-               int16_t offset_mag_x; int16_t offset_mag_y; int16_t offset_mag_z;       //magnetometer calib data
-               int16_t offset_gyr_x; int16_t offset_gyr_y; int16_t offset_gyr_z;       //gyroscope calib data
-               int16_t accel_radius; int16_t mag_radius;                               //config/computed radius
-      };
-   };
-  physical_sensor_position_t pos; //configuration parameter for remapping sensor coordinates
-   
-  #endif
 };
 
 typedef ValueProducer<MagCal> MagCalProducer;

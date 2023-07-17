@@ -28,68 +28,42 @@ namespace sensesp {
 OrientationSensor::OrientationSensor(uint8_t pin_i2c_sda, uint8_t pin_i2c_scl,
                                      orsensor_bus_addresses bus_i2c_addr, sensor_cap cap)
   {
-//bus_i2c_addr convention:
-//                          if using single sensors the first three positions are for (in order)
-//                                  Accelerometer/Magnetometer/Gyroscope single sensor i2c addresses
-//                          If using combo sensors the first position is for Combo Accel/Mag or
-//                                  Combo Accel/MAg/Gyro i2c address
-//                          the fourth position is reserved for i_2c_addr of Combo Baro/Therm sensor (like BMP280)
-
   //copy i2c address vector elements to local variables 
   //sensor_cap type is enum but biwise collects the available sensor capabilities for this build
   
+  int8_t combo_i2c_addr, gyro_i2c_addr, baro_therm_i2c_addr = 0x0;                                                     
+  combo_i2c_addr = gyro_i2c_addr = bus_i2c_addr.addr[0];
+  if (cap==AMT || cap==AMT_PLUS_BT) gyro_i2c_addr = bus_i2c_addr.addr[1];
+  if (cap == BARO_THERM || cap == AMGT_PLUS_BT || cap == AMT_PLUS_BT) baro_therm_i2c_addr = bus_i2c_addr.addr[2];
+
   sensor_interface_ = new SensorFusion();  // create our fusion engine instance
 
-  bool success =false;
+  bool success;
   // init IO subsystem, passing NULLs since we use Signal-K output instead.
-  
+  success =
       //sensor_interface_->InitializeInputOutputSubsystem(NULL, NULL) && ****controlsubsystem eliminated
       //                                                                     since we use Signal-K output instead.
 
       // connect to the sensors.  Remember that some sensor can be of combo type (see Orientation_sensor.h).
-      switch (cap){
-        case AMT:
-        case AMT_PLUS_BT://  it is supposed that if sensor is of Combo Accel/Mag type there are also the companion gyro
-                         //  in order to obtain the accel/gyro/mag fusion
-        success = sensor_interface_->InstallSensor(bus_i2c_addr.addr[0],
-                                       SensorType::kMagnetometerAccelerometer) &&
-                  sensor_interface_->InstallSensor(bus_i2c_addr.addr[2],
-                                       SensorType::kGyroscope);
-        break;
-        case AMGT:
-        case AMGT_PLUS_BT:
-        success = sensor_interface_->InstallSensor(bus_i2c_addr.addr[0],
-                                       SensorType::kMagnetometerAccelerometerGyroscope);
-        break;
-        default : //  it is supposed that if sensor is of "single" type there are also the companion singles
-                  //  in order obtain the accel/gyro/mag fusion
-        success= sensor_interface_->InstallSensor(bus_i2c_addr.addr[0],
+      sensor_interface_->InstallSensor(combo_i2c_addr,
                                        SensorType::kMagnetometer) &&
-                  sensor_interface_->InstallSensor(bus_i2c_addr.addr[1],
+      sensor_interface_->InstallSensor(combo_i2c_addr,
                                        SensorType::kAccelerometer) &&
-                  sensor_interface_->InstallSensor(bus_i2c_addr.addr[2], 
-                                       SensorType::kGyroscope); 
-        break;
-      }
-                                 
+      sensor_interface_->InstallSensor(gyro_i2c_addr, //if cap == AMG or AMG_PLUSBT equals combo_i2c_addr
+                                       SensorType::kGyroscope) &&                                      
 #ifndef EXTERN_BARO_THERM_SENSOR
-      // A thermometer (uncalibrated) is available in the
-      // accelerometer/magnetometer IC. Install it as if it was a separate sensor
-      // only if the thermometer selected bit is on in "cap" mask field
-      // in other words the therm sensor is installed as if it was "single"
-      // but using the internal  temp  of combo
-      if (cap & THERM_ONLY) {
-        success &= sensor_interface_->InstallSensor(bus_i2c_addr.addr[0],
+       // A thermometer (uncalibrated) is available in the
+      // accelerometer/magnetometer IC.
+      sensor_interface_->InstallSensor(combo_i2c_addr,
                                        SensorType::kThermometer) ;
-      }
 #endif
 #ifdef EXTERN_BARO_THERM_SENSOR
       // if in the (breakout or main board) hardware solution is available 
       // an enviromental sensor IC like BMP280 .
-      if ((cap & THERM_ONLY) && (cap & BARO_ONLY)) success &= sensor_interface_->InstallSensor(bus_i2c_addr.addr[3],
+      sensor_interface_->InstallSensor(baro_therm_i2c_addr_addr,
                                        SensorType::kThermometer) &&
-                                                  sensor_interface_->InstallSensor(bus_i2c_addr.addr[3],
-                                       SensorType::kBarometer);
+      sensor_interface_->InstallSensor(baro_therm_i2c_addr_addr,
+                                       SensorType::kBarometer) && ;
 #endif
       
   if (!success) {
@@ -159,16 +133,14 @@ void AttitudeValues::start() {
 void AttitudeValues::Update() {
   //check whether magnetic calibration has been requested to be saved or deleted
   if( 1 == save_mag_cal_ ) {
-    orientation_sensor_->sensor_interface_-> ReadCalibrationData ();      //in smartsensor calib data are stored in sensor registers
-    orientation_sensor_->sensor_interface_-> SaveMagneticCalibration ();  //in smartsensor case calib is saved for all sensors 
+    orientation_sensor_->sensor_interface_-> SaveMagneticCalibration ();
   }else if( -1 == save_mag_cal_ ) {
-    orientation_sensor_->sensor_interface_-> EraseMagneticCalibration (); //in smartsensor case calib is erased for all sensors
+    orientation_sensor_->sensor_interface_-> EraseMagneticCalibration ();
   }
   save_mag_cal_ = 0;  // set flag back to zero so we don't repeat save/delete
   attitude_.is_data_valid =
       orientation_sensor_->sensor_interface_->IsDataValid();
-  attitude_.yaw = 
-      orientation_sensor_->sensor_interface_->GetHeadingRadians();
+  attitude_.yaw = orientation_sensor_->sensor_interface_->GetHeadingRadians();
   attitude_.roll =
       orientation_sensor_->sensor_interface_->GetRollRadians();
   attitude_.pitch =
@@ -194,9 +166,9 @@ static const char SCHEMA[] PROGMEM = R"###({
           "description": "Milliseconds between outputs of this parameter" 
         },
         "save_mag_cal": { 
-          "title": "Save Magnetic (or all sensor types if the sensor is smart) Cal", 
+          "title": "Save Magnetic Cal", 
           "type": "number", 
-          "description": "Set to 1 to save current calibration" 
+          "description": "Set to 1 to save current magnetic calibration" 
         }
     }
   })###";
@@ -244,29 +216,14 @@ bool AttitudeValues::set_configuration(const JsonObject& config) {
  * @param orientation_sensor Pointer to the physical sensor's interface
  * @param report_interval_ms Interval between output reports
  * @param config_path RESTful path by which reporting frequency can be
- * configured. Also for store/modify sensor calibration offsets
+ * configured.
  */
 MagCalValues::MagCalValues(OrientationSensor* orientation_sensor,
-                           uint report_interval_ms = 100,
-/*
-    #ifdef F_USING_SMARTSENSOR
-                           physical_sensor_position_t pos = P1,
-    #endif
-*/
-                           String config_path = "")
+                               uint report_interval_ms, String config_path)
     : Sensor(config_path),
       orientation_sensor_{orientation_sensor},
       report_interval_ms_{report_interval_ms} {
-  //mag_cal_.pos = pos;    // explicit init because cannot initialize a struct member with curly braces 
   load_configuration();
-  #ifdef F_USING_SMARTSENSOR
-   // Execute once the SetaxisRemap in order to set the IMU axis remap and sign registers
-   // to a configured (stored) physical position before starting to read the sensor with update
-   orientation_sensor->sensor_interface_-> SetAxisRemap(mag_cal_.pos);
-   // Execute once the SaveMagneticCalibration in order to set the IMU offset registers
-   // to a valid (stored) calibration status before starting to read the sensor with update
-   orientation_sensor_->sensor_interface_->SaveMagneticCalibration();
-  #endif
 }  // end MagCalValues()
 
 /**
@@ -292,7 +249,6 @@ void MagCalValues::start() {
 void MagCalValues::Update() {
   mag_cal_.is_data_valid =
       orientation_sensor_->sensor_interface_->IsDataValid();
-  #ifndef F_USING_SMARTSENSOR    
   mag_cal_.cal_fit_error = orientation_sensor_->sensor_interface_->GetMagneticFitError() / 100.0;
   mag_cal_.cal_fit_error_trial = orientation_sensor_->sensor_interface_->GetMagneticFitErrorTrial() / 100.0;
   mag_cal_.mag_field_magnitude = orientation_sensor_->sensor_interface_->GetMagneticBMag();
@@ -300,18 +256,8 @@ void MagCalValues::Update() {
   mag_cal_.mag_noise_covariance = orientation_sensor_->sensor_interface_->GetMagneticNoiseCovariance();
   mag_cal_.mag_solver = orientation_sensor_->sensor_interface_->GetMagneticCalSolver();
   mag_cal_.magnetic_inclination = orientation_sensor_->sensor_interface_->GetMagneticInclinationRad();
-  #endif
-  #ifdef F_USING_SMARTSENSOR
-  // calibration indexes are read-only from IMU sensor so no config path is declared for them
-  // so no value is stored in SPIFSS
-  mag_cal_.IMU_calibration_index = orientation_sensor_->sensor_interface_->GetIMUCalibrationIndex();
-  mag_cal_.Gyro_calibration_index = orientation_sensor_->sensor_interface_->GetGyroCalibrationIndex();
-  mag_cal_.Acc_calibration_index = orientation_sensor_->sensor_interface_->GetAccelCalibrationIndex();
-  mag_cal_.Mag_calibration_index = orientation_sensor_->sensor_interface_->GetMagCalibrationIndex();
-  // Calibration data have sensESP config paths so they shoulh have a safe place on SPIFSS
-  orientation_sensor_->sensor_interface_->GetCalibrationData(&mag_cal_.cal_data[0]);
-  #endif
-  output = mag_cal_; //remember that in case of smartsensor mag_cal_ contains calib data for all sensors
+
+  output = mag_cal_;
   notify();
 }  // end Update()
 
@@ -319,91 +265,16 @@ void MagCalValues::Update() {
  * @brief Define the format for the MagCal value producer.
  *
  */
-#ifndef F_USING_SMARTSENSOR
 static const char SCHEMA_MAGCAL[] PROGMEM = R"###({
     "type": "object",
     "properties": {
         "report_interval": { 
           "title": "Report Interval", 
           "type": "number", 
-          "description": "Milliseconds between outputs of this parameter"
+          "description": "Milliseconds between outputs of this parameter" 
         }
     }
   })###";
-  #endif
-  #ifdef F_USING_SMARTSENSOR
-static const char SCHEMA_MAGCAL[] PROGMEM = R"###({
-    "type": "object",
-    "properties": {
-        "report_interval": { 
-          "title": "Report Interval", 
-          "type": "number", 
-          "description": "Milliseconds between MagCal outputs"
-        },
-        "offset_Accel_x": {
-          "title": "offset_Accel_x", 
-          "type": "number", 
-          "description": "X-axis off/calib" 
-        },
-        "offset_Accel_y": {
-          "title": "offset_Accel_y", 
-          "type": "number", 
-          "description": "Y-axis off/calib" 
-        },
-        "offset_Accel_z": {
-          "title": "offset_Accel_z", 
-          "type": "number", 
-          "description": "Z-axis off/calib" 
-        },
-        "offset_Mag_x": {
-          "title": "offset_Mag_x", 
-          "type": "number", 
-          "description": "X-axis off/calib" 
-        },
-        "offset_Mag_y": {
-          "title": "offset_Mag_y", 
-          "type": "number", 
-          "description": "Y-axis off/calib" 
-        },
-        "offset_Mag_z": {
-          "title": "offset_Mag_z", 
-          "type": "number", 
-          "description": "Z-axis off/calib" 
-        },
-        "offset_Gyr_x": {
-          "title": "offset_Gyr_x", 
-          "type": "number", 
-          "description": "X-axis off/calib" 
-        },
-        "offset_Gyr_y": {
-          "title": "offset_Gyr_y", 
-          "type": "number", 
-          "description": "Y-axis off/calib" 
-        },
-        "offset_Gyr_z": {
-          "title": "offset_Gyr_z", 
-          "type": "number", 
-          "description": "Z-axis off/calib" 
-        },
-        "radius_Accel": {
-          "title": "radius_Accel", 
-          "type": "number", 
-          "description": "Radius" 
-        },
-        "radius_Mag": {
-          "title": "radius_Mag", 
-          "type": "number", 
-          "description": "Radius" 
-        },
-        "physical_position": {
-          "title": "physical_position", 
-          "type": "number", 
-          "description": "Sensor orientation ref" 
-        }
-    }
-  })###";
-  #endif
-
 
 /**
  * @brief Get the current sensor configuration and place it in a JSON
@@ -413,21 +284,7 @@ static const char SCHEMA_MAGCAL[] PROGMEM = R"###({
  * to be updated.
  */
 void MagCalValues::get_configuration(JsonObject& doc) {
-  doc["report_interval"]    = report_interval_ms_;
-  #ifdef F_USING_SMARTSENSOR
-  doc["physical_position"]  = mag_cal_.pos;
-  doc[ "offset_Accel_x"]    = mag_cal_.offset_accel_x;
-  doc[ "offset_Accel_y"]    = mag_cal_.offset_accel_y;
-  doc[ "offset_Accel_z"]    = mag_cal_.offset_accel_z;
-  doc[ "offset_Mag_x"]      = mag_cal_.offset_mag_x;
-  doc[ "offset_Mag_y"]      = mag_cal_.offset_mag_y;
-  doc[ "offset_Mag_z"]      = mag_cal_.offset_mag_z;
-  doc[ "offset_Gyr_x"]      = mag_cal_.offset_gyr_x;
-  doc[ "offset_Gyr_y"]      = mag_cal_.offset_gyr_y;
-  doc[ "offset_Gyr_z"]      = mag_cal_.offset_gyr_z;
-  doc[ "radius_Mag"]        = mag_cal_.mag_radius;
-  doc[ "radius_Accel"]      = mag_cal_.accel_radius;
-  #endif
+  doc["report_interval"] = report_interval_ms_;
 }  // end get_configuration()
 
 /**
@@ -438,65 +295,19 @@ String MagCalValues::get_config_schema() { return FPSTR(SCHEMA_MAGCAL); }
 /**
  * @brief Use the values stored in JSON object config to update
  * the appropriate member variables.
- * 
- * #IF F_USING_SMARTSENSOR:
- * Updates also the corresponding variables in interfaced sensor
  *
  * @param config JSON object containing the configuration parameters
  * to be updated.
  * @return True if successful; False if a parameter could not be found.
  */
 bool MagCalValues::set_configuration(const JsonObject& config) {
-  #ifdef F_USING_SMARTSENSOR
-  orientation_sensor_->sensor_interface_->GetCalibrationData(&mag_cal_.cal_data[0]);
-  // don't call SetAxisRemap. It is called once at startup (pos will vary only moving sensor in another place)
-  #endif
-  int8_t i = 0;
-  #ifndef F_USING_SMARTSENSOR
-  String expected[] = {"report_interval" };
-  #endif
-  #ifdef F_USING_SMARTSENSOR
-  String expected[] = {   "report_interval"
-                        , "offset_Accel_x"
-                        , "offset_Accel_y"
-                        , "offset_Accel_z"
-                        , "offset_Mag_x"
-                        , "offset_Mag_y"
-                        , "offset_Mag_z"
-                        , "offset_Gyr_x"
-                        , "offset_Gyr_y"
-                        , "offset_Gyr_z"
-                        , "radius_Accel"
-                        , "radius_Mag" 
-                        , "physical_position"
-                      };
-  #endif
+  String expected[] = {"report_interval"};
   for (auto str : expected) {
     if (!config.containsKey(str)) {
       return false;
     }
   }
-  
-  report_interval_ms_       = config["report_interval"];
-  #ifdef F_USING_SMARTSENSOR
-  mag_cal_.pos              = config["physical_position"];
-  mag_cal_.offset_accel_x   = config[ "offset_Accel_x"];
-  mag_cal_.offset_accel_y   = config[ "offset_Accel_y"];
-  mag_cal_.offset_accel_z   = config[ "offset_Accel_z"];
-  mag_cal_.offset_mag_x     = config[ "offset_Mag_x"];
-  mag_cal_.offset_mag_y     = config[ "offset_Mag_y"];
-  mag_cal_.offset_mag_z     = config[ "offset_Mag_z"];
-  mag_cal_.offset_gyr_x     = config[ "offset_Gyr_x"];
-  mag_cal_.offset_gyr_y     = config[ "offset_Gyr_y"];
-  mag_cal_.offset_gyr_z     = config[ "offset_Gyr_z"];
-  mag_cal_.mag_radius       = config[ "radius_Mag"];
-  mag_cal_.accel_radius     = config[ "radius_Accel"];
-  #endif
-  
-  #ifdef F_USING_SMARTSENSOR
-  orientation_sensor_->sensor_interface_->SetCalibrationData(&mag_cal_.cal_data[0]);
-  // don't call SetAxisRemap. It is called once at startup (pos will vary only moving sensor in another place)
-  #endif
+  report_interval_ms_ = config["report_interval"];
   return true;
 }  // end set_configuration()
 
@@ -581,7 +392,6 @@ void OrientationValues::Update() {
     case (kTemperature):
       output = orientation_sensor_->sensor_interface_->GetTemperatureK();
       break;
-    #ifndef F_USING_SMARTSENSOR
     case (kMagCalFitInUse):
       output = orientation_sensor_->sensor_interface_->GetMagneticFitError();
       break;
@@ -605,21 +415,6 @@ void OrientationValues::Update() {
     case (kMagNoiseCovariance):
       output = orientation_sensor_->sensor_interface_->GetMagneticNoiseCovariance();
       break;
-      #endif
-      #ifdef F_USING_SMARTSENSOR
-    case (kIMUCalibrationIndex):  
-      output = orientation_sensor_->sensor_interface_->GetIMUCalibrationIndex();
-      break;
-    case (kGyroCalibrationIndex):  
-      output = orientation_sensor_->sensor_interface_->GetGyroCalibrationIndex();
-      break;
-    case (kAccelCalibrationIndex):  
-      output = orientation_sensor_->sensor_interface_->GetAccelCalibrationIndex();
-      break;
-    case (kMagCalibrationIndex):  
-      output = orientation_sensor_->sensor_interface_->GetMagCalibrationIndex();
-      break;
-      #endif
     default:
       return; //skip the notify(), due to unrecognized value type
   }
@@ -638,9 +433,6 @@ void OrientationValues::Update() {
 void OrientationValues::get_configuration(JsonObject& doc) {
   doc["report_interval"] = report_interval_ms_;
   doc["save_mag_cal"] = save_mag_cal_;
-#ifdef F_USING_SMARTSENSOR
-
-#endif
 }  // end get_configuration()
 
 /**
