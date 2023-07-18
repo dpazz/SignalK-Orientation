@@ -55,21 +55,21 @@ extern "C" {
 // set RGB LED as a function of bit-field values
 void ssSetLeds(int8_t RGB)
 {
-    if (RGB & R) {
-        LED_RED_ON();
-    }else{
-        LED_RED_OFF();
-    }
-    if (RGB & G) {
-        LED_GREEN_ON();
-    }else {
-        LED_GREEN_OFF();
-    }
-    if (RGB & B) {
-        LED_BLUE_ON();
-    }else {
-        LED_BLUE_OFF();
-    }
+        if (RGB & R) {
+            LED_RED_ON();
+        }else{
+            LED_RED_OFF();
+        }
+        if (RGB & G) {
+            LED_GREEN_ON();
+        }else {
+            LED_GREEN_OFF();
+        }
+        if (RGB & B) {
+            LED_BLUE_ON();
+        }else {
+            LED_BLUE_OFF();
+        }
 }
 
 // Do an immediate status update
@@ -84,44 +84,43 @@ void ssSetStatusNow(StatusSubsystem *pStatus, fusion_status_t status)
     // This is where we actually change the visual indicator
     switch (status)
     {
-        case INITIALIZING:      // solid GREEN
+    case INITIALIZING: // solid GREEN
             RGB = G;
             break;
-        case NORMAL:            // blinking GREEN
+    case NORMAL: // blinking GREEN
             RGB = G;
             blink = true;
             break;
-        case LOWPOWER:          // blinking YELLOW
-            RGB = R|G;
+    case LOWPOWER: // blinking YELLOW
+            RGB = R | G;
             blink = true;
             break;
-        case SOFT_FAULT:        // solid RED (usually momentary)
-        case HARD_FAULT:        // solid RED
+    case SOFT_FAULT: // solid RED (usually momentary)
+    case HARD_FAULT: // solid RED
             RGB = R;
             break;
-        default:                // default = off;
+    default: // default = off;
             RGB = N;
     }
-
     if ((!blink) | (status != pStatus->previous))
     {
-        ssSetLeds(RGB);
-        pStatus->toggle = true;
+            ssSetLeds(RGB);
+            pStatus->toggle = true;
     }
     else
     {
-        if (pStatus->toggle)
-        {
-            ssSetLeds(N);
-        }
-        else
-        {
-            ssSetLeds(RGB);
-        }
-
-        pStatus->toggle = !pStatus->toggle;
+            if (pStatus->toggle)
+            {
+                ssSetLeds(N);
+            }
+            else
+            {
+                ssSetLeds(RGB);
+            }
+            pStatus->toggle = !pStatus->toggle;
     }
-    while (status == HARD_FAULT) ; // Never return on hard fault
+    while (status == HARD_FAULT)
+            ; // Never return on hard fault
     // while (status == SOFT_FAULT) ; // DEBUG ONLY Never return on soft fault
 }
 
@@ -755,7 +754,7 @@ float SensorFusion::GetTurnRateRadPerS(void)
  */
 float SensorFusion::GetPitchRateDegPerS(void)
 {
-    return sfg_->SV_9DOF_GBY_KALMAN.fOmega[0];
+    return -sfg_->SV_9DOF_GBY_KALMAN.fOmega[0];
 } // end GetPitchRateDegPerS()
 
 /**

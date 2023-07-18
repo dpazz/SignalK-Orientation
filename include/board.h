@@ -69,13 +69,13 @@ extern "C" {
 #define LOGIC_LED_OFF 0U
 
 #ifndef BOARD_LED_RED_GPIO_PIN
-#define BOARD_LED_RED_GPIO_PIN (0)
+#define BOARD_LED_RED_GPIO_PIN (4)
 #endif
 #ifndef BOARD_LED_GREEN_GPIO_PIN
 #define BOARD_LED_GREEN_GPIO_PIN (2)
 #endif
 #ifndef BOARD_LED_BLUE_GPIO_PIN
-#define BOARD_LED_BLUE_GPIO_PIN (4)
+#define BOARD_LED_BLUE_GPIO_PIN (0)
 #endif
 
 #ifndef LED_BUILTIN
