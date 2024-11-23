@@ -119,8 +119,8 @@ void setup() {
                     // Set a custom hostname for the app.
                     ->set_hostname("ecompass-free-time")
                     // Optionally, hard-code the WiFi and Signal K server settings
-                    //->set_wifi("4G-WIFI-FREE-TIME", "pazzagliawless")
-                    //->set_sk_server("10.10.10.2", 3000)
+                    ->set_wifi("4G-WIFI-FREE-TIME", "pazzagliawless")
+                    ->set_sk_server("10.10.10.2", 3000)
                     // SensESP has several builtin sensors, e.g. freemem, uptime, IP address
                     //  Optionally enable them here to output their values in SK reports.
                     ->enable_uptime_sensor()
