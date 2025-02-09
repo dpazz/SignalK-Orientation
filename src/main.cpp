@@ -356,7 +356,7 @@ void setup() {
    * values and will need a custom instrument to display.
    */
    auto* sensor_mag_cal = new MagCalValues(
-       orientation_sensor, ORIENTATION_REPORTING_INTERVAL_MS * 20,
+       orientation_sensor, ORIENTATION_REPORTING_INTERVAL_MS  * 20,
        kConfigPathMagCal);
    sensor_mag_cal->connect_to(
        //new SKOutputMagCal(kSKPathMagCalValues, kConfigPathMagCal));
